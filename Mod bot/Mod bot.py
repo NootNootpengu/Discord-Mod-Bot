@@ -4,8 +4,7 @@ import datetime
 import discord
 from discord.ext import commands
 
-token = 'MTA4MTYxMTc1MjA4MjUyMjEyMg.G93YOe.dAho_96ALxu_7P3IhPCMUh3oNmbnlhXw2NhNQQ'
-# MTA4NzMyMjY0ODU1MzQ2Mzg2OA.Gldqdv.AhLtTCggqUU2wYQPk8bR10VhFJFVvWrrdtIpbU
+token = ''
 prefix = "<"
 print("Loading..")
 
