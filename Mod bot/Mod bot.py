@@ -1,10 +1,13 @@
 # Welcome to Mod bot made by Saul Nootman
-
+from dotenv import load_dotenv
 import datetime
 import discord
 from discord.ext import commands
+import os
 
-token = ''
+load_dotenv()
+token = os.getenv("token")
+
 prefix = "<"
 print("Loading..")
 
