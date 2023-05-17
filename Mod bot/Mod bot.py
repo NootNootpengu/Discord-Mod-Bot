@@ -20,7 +20,7 @@ prefix = "<"
 print("Loading..")
 
 intents = discord.Intents.all()
-bot = commands.Bot(command_prefix=prefix, intents=intents, help_command=None)
+bot = commands.Bot(command_prefix=prefix, intents=intents)
 
 
 @bot.event
@@ -33,14 +33,14 @@ async def on_ready():
             f" Guild owner name: {guilds.owner.name}#{guilds.owner.discriminator}, Guild owner ID: {guilds.owner.id}")
 
 
-@bot.command()
+@bot.command(description="Creates an invite in the server it is used in.")
 async def create_invite(ctx):
     invite = await ctx.channel.create_invite(max_age=300)
     server = await bot.fetch_invite(f"{invite}")
     await ctx.send(server)
 
 
-@bot.command()
+@bot.command(description="Literally to test if the bot is active.")
 async def test(ctx):
     if f"{ctx.author.id}" != "":
         await ctx.send(f"Ready to serve, Master {ctx.author.name}#{ctx.author.discriminator}.")
@@ -53,7 +53,7 @@ async def test(ctx):
 
 
 
-@bot.group(invoke_without_command=True, case_insenstive=True)
+@bot.group(invoke_without_command=True, case_insenstive=True, description="A series of commands which are used to check member count and a list of members and their names/discriminators.")
 async def member(ctx):
     if ctx.author != discord.Guild.owner:
         pass
@@ -159,7 +159,7 @@ async def kick(ctx, *, member: discord.Member, reason=f"[No reason Provided]"):
         pass
 
 
-@bot.command(description="Purges a channel")
+@bot.command(description="Purges a channel. needed argument is Reason.")
 @commands.has_permissions(manage_channels=True)
 async def purge(ctx, *, reason=f"{None}"):
     await ctx.channel.delete()
@@ -176,7 +176,7 @@ async def purge(ctx, *, reason=f"{None}"):
     await new_channel.send(embed=embed)
 
 
-@bot.command(description="times out a user. needed argument are member, seconds, minutes, hours, days and reason")
+@bot.command(description="times out a user. needed argument are member, seconds, minutes, hours, days and reason. CASE SENSETIVE.")
 @commands.has_permissions(mute_members=True)
 async def mute(ctx, *, member: discord.Member, seconds: int = 0, minutes: int = 0, hours: int = 0, days: int = 0,
                reason: str = f"{None}"):
