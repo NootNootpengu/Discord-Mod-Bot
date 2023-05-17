@@ -2,4 +2,4 @@ This is a student project made by me, i am Saul Nootman#2864 on discord, feel fr
 
 Please take into consdieration that this bot is a made in progress and it is not at all online or active. it is just a theoretical code of a future practical Mod bot to help discord server owners keep their server safe.
 
-
+**Commands**
