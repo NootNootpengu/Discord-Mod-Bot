@@ -1,4 +1,4 @@
-# Welcome to Mod bot made by Saul Nootman
+# Welcome to Mod bot made by Saul Nootman#2864
 # Did you know you have rights?
 # well this is made for you!
 # so you can enforce those rights on your server members
@@ -6,7 +6,7 @@
 # -signed with blood
 # P.S. if you steal my code, i will find you.
 # your rights will not help you that day.
-
+from discord.ext.commands import MissingPermissions
 from dotenv import load_dotenv
 from datetime import datetime
 import datetime
@@ -14,6 +14,9 @@ import discord
 from discord.ext import commands
 import os
 import pytz
+
+
+
 
 load_dotenv()
 token = os.getenv("token")
@@ -33,8 +36,17 @@ async def on_ready():
     for guilds in bot.guilds:
         print(
             f"Guild name: {guilds.name}, Guild ID: {guilds.id},"
-            f" Guild owner name: {guilds.owner.name}#{guilds.owner.discriminator}, Guild owner ID: {guilds.owner.id}"
-            f"---------------")
+            f" Guild owner name: {guilds.owner.name}#{guilds.owner.discriminator}, Guild owner ID: {guilds.owner.id}")
+        print("---------------")
+
+
+
+@bot.event
+async def on_command_error(ctx, error):
+    if isinstance(error, MissingPermissions):
+        await ctx.send("You are missing permission(s) to run this command.")
+    else:
+        raise error
 
 
 @bot.command(description="Creates an invite in the server it is used in.")
@@ -48,7 +60,7 @@ async def create_invite(ctx):
     )
     imageurl = ctx.author.display_avatar
     embed1.set_image(url=imageurl)
-    await ctx.send(embed1)
+    await ctx.send(embed=embed1)
     await ctx.send(server)
 
 
