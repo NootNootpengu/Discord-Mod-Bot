@@ -1,3 +1,5 @@
+
+
 # Welcome to Mod bot made by Saul Nootman#2864
 # Did you know you have rights?
 # well this is made for you!
@@ -6,6 +8,7 @@
 # -signed with blood
 # P.S. if you steal my code, i will find you.
 # your rights will not help you that day.
+
 from discord.ext.commands import MissingPermissions
 from dotenv import load_dotenv
 from datetime import datetime
@@ -21,6 +24,9 @@ import pytz
 load_dotenv()
 token = os.getenv("token")
 
+
+
+# config
 prefix = "<"
 print("Loading...")
 
@@ -28,6 +34,9 @@ intents = discord.Intents.all()
 bot = commands.Bot(command_prefix=prefix, intents=intents)
 
 
+
+# handles startup
+# prints guild names, ID's, owner names/discriminator/ID 
 @bot.event
 async def on_ready():
     os.system('cls')
@@ -37,10 +46,14 @@ async def on_ready():
         print(
             f"Guild name: {guilds.name}, Guild ID: {guilds.id},"
             f" Guild owner name: {guilds.owner.name}#{guilds.owner.discriminator}, Guild owner ID: {guilds.owner.id}")
-        print("---------------")
+            print("---------------")
 
 
 
+
+
+
+# Handles command error specified as Missing Perms
 @bot.event
 async def on_command_error(ctx, error):
     if isinstance(error, MissingPermissions):
@@ -49,6 +62,22 @@ async def on_command_error(ctx, error):
         raise error
 
 
+
+# Test command which test the bot, also a bit of vanity code added for fun
+@bot.command(description="Literally to test if the bot is active.")
+async def test(ctx):
+    london = datetime.now(pytz.timezone("Europe/London"))
+    if ctx.author.id == 1081507207180460032:
+        await ctx.send(f"Ready to serve, Master {ctx.author.name}#{ctx.author.discriminator}.")
+    elif ctx.author == discord.Guild.owner:
+        await ctx.send(f"Ready to serve, Master {ctx.author.name}#{ctx.author.discriminator}.")
+    else:
+        await ctx.send("You are not Master. filing suspicious entry.")
+        await ctx.send(f"User {ctx.author.mention} at exctaly {london} (london time), used [TEST] command. entry filed. reporting to <@1081507207180460032>")
+    
+    
+
+# Creates invite to the Guild/server which the command is used in
 @bot.command(description="Creates an invite in the server it is used in.")
 async def create_invite(ctx):
     invite = await ctx.channel.create_invite(max_age=300)
@@ -64,31 +93,26 @@ async def create_invite(ctx):
     await ctx.send(server)
 
 
-@bot.command(description="Literally to test if the bot is active.")
-async def test(ctx):
-    london = datetime.now(pytz.timezone("Europe/London"))
-    if ctx.author.id == 1081507207180460032:
-        await ctx.send(f"Ready to serve, Master {ctx.author.name}#{ctx.author.discriminator}.")
-    else:
-        await ctx.send(f"You are not Master. filing entry.")
-        await ctx.send(f"User {ctx.author.name}#{ctx.author.discriminator}, at exactly {london}")
-        await ctx.send("Filed entry.")
 
 
+# a group of command to check member count, a list of names and discriminator and perhaps furthur details in the future
+# WARNING: command can only be used by guild/server owner
 @bot.group(invoke_without_command=True, case_insenstive=True,
            description="A series of commands which are used to check member count and a list of members and their names/discriminators.")
 async def member(ctx):
     if ctx.author != discord.Guild.owner:
-        pass
+        return
     else:
         await ctx.send(f'Choose an option from -> {", ".join([c.name for c in ctx.command.commands])}')
 
 
+
+# member count check
 @member.command()
 async def count(ctx):
     members = []
     if ctx.author != discord.Guild.owner:
-        pass
+        return
     else:
         for n in bot.get_all_members():
             if n.bot:
@@ -98,11 +122,13 @@ async def count(ctx):
         await ctx.send(f"{len(members)}")
 
 
+
+# member name check
 @member.command()
 async def names(ctx):
     members = []
     if ctx.author != discord.Guild.owner:
-        pass
+        return
     else:
         for n in bot.get_all_members():
             if n.bot:
@@ -112,20 +138,9 @@ async def names(ctx):
         await ctx.send(members)
 
 
-@bot.command()
-async def members(ctx):
-    members = []
-    if ctx.author != discord.Guild.owner:
-        pass
-    else:
-        for n in bot.get_all_members():
-            if n.bot:
-                continue
-            else:
-                members.append(f"{n.name}#{n.discriminator}")
-        await ctx.send(f"{len(members)}")
 
 
+# Basic ban command
 @bot.command(description="Ban a user. needed argument is Member and Reason")
 @commands.has_permissions(ban_members=True)
 async def ban(ctx, member: discord.Member, reason=f"{None}"):
@@ -136,7 +151,6 @@ async def ban(ctx, member: discord.Member, reason=f"{None}"):
         await ctx.send(embed=embed2)
         return
     try:
-        await member.ban(reason=reason)
         embed3 = discord.Embed(
             title="Ban",
             description=f"{member.mention} has been banned by {ctx.author.mention} for {reason}.",
@@ -145,14 +159,18 @@ async def ban(ctx, member: discord.Member, reason=f"{None}"):
         imageurl = f'{member.display_avatar}'
         embed3.set_image(url=imageurl)
         await ctx.send(embed=embed3)
+        try:
+            await ctx.member.send(embed3)
+        except:
+            pass
+        await member.ban(reason=reason)
     except:
         await ctx.send("Unsuccessful command")
-    try:
-        await ctx.member.send(embed3)
-    except:
-        pass
 
 
+
+
+# Basic kick command
 @bot.command(description="Kicks a user. needed argument is Member and Reason")
 @commands.has_permissions(kick_members=True)
 async def kick(ctx, member: discord.Member, reason=f"[No reason Provided]"):
@@ -163,7 +181,6 @@ async def kick(ctx, member: discord.Member, reason=f"[No reason Provided]"):
         await ctx.send(embed=embed4)
         return
     try:
-        await member.kick(reason=reason)
         embed5 = discord.Embed(
             title="Kick",
             description=f"{member.mention} has been kicked by {ctx.author.mention} for {reason}.",
@@ -172,31 +189,19 @@ async def kick(ctx, member: discord.Member, reason=f"[No reason Provided]"):
         imageurl = f'{member.display_avatar}'
         embed5.set_image(url=imageurl)
         await ctx.send(embed=embed5)
+        try:
+            await ctx.member.send(embed5)
+        except:
+            pass
+        await member.kick(reason=reason)        
     except:
         await ctx.send("Unsuccessful command")
-    try:
-        await ctx.member.send(embed5)
-    except:
-        pass
 
 
-@bot.command(description="Purges a channel. needed argument is Reason.")
-@commands.has_permissions(manage_channels=True)
-async def purge(ctx, reason=f"{None}"):
-    await ctx.channel.delete()
-    new_channel = await ctx.channel.clone(reason=reason)
-    await new_channel.edit(position=ctx.channel.position)
-    embed6 = discord.Embed(
-        title="Purge",
-        description=f"Channel was purged by {ctx.author.mention}.",
-        colour=discord.Colour.red()
-    )
-    imageurl = f'{ctx.author.display_avatar}'
-    embed6.set_image(url=imageurl)
-    bot.get_channel(new_channel.id)
-    await new_channel.send(embed=embed6)
 
 
+
+# Basic mute command
 @bot.command(
     description="times out a user. needed argument are member, seconds, minutes, hours, days and reason. CASE SENSITIVE.")
 @commands.has_permissions(mute_members=True)
@@ -226,6 +231,26 @@ async def mute(ctx, member: discord.Member, seconds: int = 0, minutes: int = 0, 
     except:
         pass
 
+
+
+# Purges a channel
+# WARNING: the bot does not directly purge the channel, but deletes and clones the channel
+# which clears all messages
+@bot.command(description="Purges a channel. needed argument is Reason.")
+@commands.has_permissions(manage_channels=True)
+async def purge(ctx, reason=f"{None}"):
+    await ctx.channel.delete()
+    new_channel = await ctx.channel.clone(reason=reason)
+    await new_channel.edit(position=ctx.channel.position)
+    embed6 = discord.Embed(
+        title="Purge",
+        description=f"Channel was purged by {ctx.author.mention}.",
+        colour=discord.Colour.red()
+    )
+    imageurl = f'{ctx.author.display_avatar}'
+    embed6.set_image(url=imageurl)
+    bot.get_channel(new_channel.id)
+    await new_channel.send(embed=embed6)
 
 try:
     bot.run(token)
